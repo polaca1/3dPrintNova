@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://polaca1.github.io/3dPrintNova/sitemap.xml
