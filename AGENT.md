@@ -44,6 +44,9 @@
 - Cambiado `dev` de `next dev --turbopack` a `next dev` estable; se dejo `dev:turbo` para uso opcional.
 - Configurado remoto `origin` como `https://github.com/polaca1/3dPrintNova.git`.
 - Ejecutado `git push -u origin main`; la rama local `main` queda siguiendo `origin/main`.
+- Configurado despliegue a GitHub Pages mediante workflow `.github/workflows/deploy.yml`.
+- Actualizado `next.config.ts` para usar `output: "export"`, `basePath: "/3dPrintNova"`, `assetPrefix` y `images.unoptimized` cuando `GITHUB_PAGES=true`.
+- Marcadas `app/robots.ts` y `app/sitemap.ts` como `dynamic = "force-static"` para que funcionen con export estatico.
 
 ## Errores encontrados
 
@@ -66,6 +69,7 @@
 - No hay remoto Git configurado; `git remote -v` no devuelve entradas.
 - El dev server con Turbopack mostro un panic inesperado sobre `app/globals.css`, aunque recompilo despues.
 - Antes de recibir el enlace de GitHub no se pudo hacer push porque no habia remoto; tras recibir `polaca1/3dPrintNova`, se configuro y se hizo push correctamente.
+- El primer build con `GITHUB_PAGES=true` fallo porque `/robots.txt` y `/sitemap.xml` no estaban marcados como rutas estaticas para `output: export`.
 
 ## Soluciones aplicadas
 
@@ -79,6 +83,8 @@
 - Se configuro identidad Git local del repo: `user.name=3DPrintNova` y `user.email=printnovagroup@gmail.com`.
 - Para evitar el panic de Turbopack durante pruebas locales, `npm.cmd run dev` usa Webpack/Next dev estable y `npm.cmd run dev:turbo` queda como alternativa.
 - Se publico la rama `main` en GitHub con upstream `origin/main`.
+- Se soluciono el build de GitHub Pages añadiendo `export const dynamic = "force-static"` en `app/robots.ts` y `app/sitemap.ts`.
+- Se verifico build estatico local con `GITHUB_PAGES=true` y `NEXT_PUBLIC_SITE_URL=https://polaca1.github.io/3dPrintNova`; el export genera `out` correctamente.
 
 ## Decisiones tecnicas
 
@@ -94,6 +100,8 @@
 - Se usa `preserveDrawingBuffer: true` en el Canvas para permitir QA automatizada del render WebGL.
 - Se usa Playwright como verificacion visual local, no como test suite formal de CI todavia.
 - Se ignora `.next` en ESLint; no volver a lintar carpetas generadas.
+- GitHub Pages se despliega con GitHub Actions oficiales: `actions/configure-pages`, `actions/upload-pages-artifact` y `actions/deploy-pages`.
+- El build de Pages usa `GITHUB_PAGES=true` para activar base path solo en produccion de Pages; el desarrollo local conserva rutas normales.
 
 ## Pendientes
 
@@ -164,6 +172,11 @@
 - `npm.cmd run visual:qa`
 - `git remote add origin https://github.com/polaca1/3dPrintNova.git`
 - `git push -u origin main`
+- `cmd.exe /d /c "set GITHUB_PAGES=true&& set NEXT_PUBLIC_SITE_URL=https://polaca1.github.io/3dPrintNova&& npm.cmd run build"`
+- `rg "/3dPrintNova/_next" out\index.html`
+- `Get-ChildItem -Recurse -Depth 2 out | Select-Object FullName`
+- `Get-Content -Raw -Encoding UTF8 out\robots.txt`
+- `Get-Content -Raw -Encoding UTF8 out\sitemap.xml`
 
 ## Notas para el siguiente agente
 
