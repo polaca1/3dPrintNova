@@ -7,8 +7,9 @@
 - Se leyo el estado del workspace antes de empezar a programar. `AGENT.md` no existia y se crea en esta sesion.
 - Sesion actual: landing + tienda online de 3DPrintNova implementada con Next.js 15 App Router, TypeScript, TailwindCSS, Framer Motion, GSAP, Lenis, React Three Fiber, Three.js, shadcn-style UI y lucide-react.
 - La web esta disponible en dev server en `http://localhost:3000` cuando `npm.cmd run dev -- --port 3000` esta corriendo.
-- El directorio no es un repositorio Git todavia; `git status --short` fallo con `fatal: not a git repository`.
-- Despues de preparar el repo, la rama local se renombro a `main` y existe un commit local inicial.
+- El proyecto ya es un repositorio Git local en rama `main`.
+- El remoto `origin` apunta a `https://github.com/polaca1/3dPrintNova.git` y `main` sigue a `origin/main`.
+- Push realizado a GitHub: `https://github.com/polaca1/3dPrintNova`.
 
 ## Ultimos cambios realizados
 
@@ -41,6 +42,8 @@
 - Creado commit local inicial con mensaje `Build 3DPrintNova landing experience`.
 - Renombrada rama local de `master` a `main`.
 - Cambiado `dev` de `next dev --turbopack` a `next dev` estable; se dejo `dev:turbo` para uso opcional.
+- Configurado remoto `origin` como `https://github.com/polaca1/3dPrintNova.git`.
+- Ejecutado `git push -u origin main`; la rama local `main` queda siguiendo `origin/main`.
 
 ## Errores encontrados
 
@@ -62,6 +65,7 @@
 - `gh --version` fallo porque GitHub CLI no esta instalado.
 - No hay remoto Git configurado; `git remote -v` no devuelve entradas.
 - El dev server con Turbopack mostro un panic inesperado sobre `app/globals.css`, aunque recompilo despues.
+- Antes de recibir el enlace de GitHub no se pudo hacer push porque no habia remoto; tras recibir `polaca1/3dPrintNova`, se configuro y se hizo push correctamente.
 
 ## Soluciones aplicadas
 
@@ -74,6 +78,7 @@
 - Se corrigio ESLint para no analizar outputs generados.
 - Se configuro identidad Git local del repo: `user.name=3DPrintNova` y `user.email=printnovagroup@gmail.com`.
 - Para evitar el panic de Turbopack durante pruebas locales, `npm.cmd run dev` usa Webpack/Next dev estable y `npm.cmd run dev:turbo` queda como alternativa.
+- Se publico la rama `main` en GitHub con upstream `origin/main`.
 
 ## Decisiones tecnicas
 
@@ -92,8 +97,6 @@
 
 ## Pendientes
 
-- Para hacer `git push`, inicializar Git o usar un remoto existente. El usuario quiere subirlo a su portfolio, pero falta remoto/confirmacion de repo destino.
-- Para hacer `git push`, falta configurar un remoto GitHub (`git remote add origin <url>`). No hay `gh` instalado para crear repos desde CLI y las herramientas GitHub disponibles no incluyen creacion de repositorio nuevo.
 - Si se quiere publicar en GitHub Pages/Vercel, configurar `NEXT_PUBLIC_SITE_URL` real y dominio final.
 - Sustituir productos mock por fotos/videos reales cuando existan.
 - Conectar ecommerce real despues: carrito, stock, checkout, Bizum/Stripe, pedidos y panel admin.
@@ -159,6 +162,8 @@
 - `gh --version`
 - `git log --oneline -2`
 - `npm.cmd run visual:qa`
+- `git remote add origin https://github.com/polaca1/3dPrintNova.git`
+- `git push -u origin main`
 
 ## Notas para el siguiente agente
 
@@ -169,6 +174,6 @@
 - `next build`, dev server y Playwright pueden requerir permisos elevados por `spawn EPERM`.
 - Si se ejecuta build antes de lint, asegurarse de que `.next/**` siga ignorado por ESLint.
 - El dev server elevado sigue siendo necesario para QA visual en este entorno.
-- Antes de hacer push, configurar remoto con `git remote add origin <url>` o crear repo GitHub.
+- El remoto ya esta configurado como `origin`; futuros cambios se publican con `git push`.
 - En este entorno, escribir en `.git` puede requerir permisos elevados.
 - Evitar `next dev --turbopack` como flujo principal: se observo panic de Turbopack en `app/globals.css`.
