@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState, type CSSProperties } from "react";
 
 import { SectionHeading } from "@/components/site/section-heading";
@@ -252,11 +253,11 @@ export function CatalogSection() {
 
         <div className="mt-10 flex justify-center" data-gsap="reveal">
           <Button asChild size="lg">
-            <a href="/tienda/">
+            <Link href="/tienda/">
               <ShoppingBag />
               Ver toda la tienda
               <ArrowRight />
-            </a>
+            </Link>
           </Button>
         </div>
       </div>

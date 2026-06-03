@@ -10,6 +10,7 @@ import {
   Sun,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -50,8 +51,11 @@ export function SiteNav() {
           <div className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => {
               const isHighlight = "highlight" in item && item.highlight;
+              const isAnchor = item.href.startsWith("#");
+              const LinkComponent = isAnchor ? "a" : Link;
+
               return (
-                <a
+                <LinkComponent
                   className={cn(
                     "rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isHighlight
@@ -62,7 +66,7 @@ export function SiteNav() {
                   key={item.href}
                 >
                   {item.label}
-                </a>
+                </LinkComponent>
               );
             })}
           </div>
@@ -107,21 +111,26 @@ export function SiteNav() {
               initial={{ opacity: 0, y: -12, scale: 0.98 }}
               transition={{ duration: 0.22 }}
             >
-              {navItems.map((item, index) => (
-                <a
-                  className={cn(
-                    "flex items-center justify-between rounded-2xl px-4 py-4 text-base font-semibold text-white transition hover:bg-white/[0.08]",
-                    index !== navItems.length - 1 &&
-                      "border-b border-white/[0.06]",
-                  )}
-                  href={item.href}
-                  key={item.href}
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                  <ArrowRight className="size-4 text-cyan-nova" />
-                </a>
-              ))}
+              {navItems.map((item, index) => {
+                const isAnchor = item.href.startsWith("#");
+                const LinkComponent = isAnchor ? "a" : Link;
+
+                return (
+                  <LinkComponent
+                    className={cn(
+                      "flex items-center justify-between rounded-2xl px-4 py-4 text-base font-semibold text-white transition hover:bg-white/[0.08]",
+                      index !== navItems.length - 1 &&
+                        "border-b border-white/[0.06]",
+                    )}
+                    href={item.href}
+                    key={item.href}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                    <ArrowRight className="size-4 text-cyan-nova" />
+                  </LinkComponent>
+                );
+              })}
               <a
                 className="mt-2 flex items-center justify-between rounded-2xl bg-primary px-4 py-4 text-base font-black text-primary-foreground"
                 href={contact.whatsappHref}

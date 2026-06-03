@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
@@ -93,10 +94,10 @@ export function HeroSection() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
-              <a href="/tienda/">
+              <Link href="/tienda/">
                 <ShoppingBag />
                 Ir a tienda
-              </a>
+              </Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
               <a href={contact.whatsappHref}>
