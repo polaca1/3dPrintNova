@@ -40,6 +40,7 @@
 - Añadido script `visual:qa` en `package.json` para ejecutar `node scripts/visual-qa.mjs`.
 - Creado commit local inicial con mensaje `Build 3DPrintNova landing experience`.
 - Renombrada rama local de `master` a `main`.
+- Cambiado `dev` de `next dev --turbopack` a `next dev` estable; se dejo `dev:turbo` para uso opcional.
 
 ## Errores encontrados
 
@@ -60,6 +61,7 @@
 - `git commit` fallo inicialmente porque Git no tenia identidad de autor configurada.
 - `gh --version` fallo porque GitHub CLI no esta instalado.
 - No hay remoto Git configurado; `git remote -v` no devuelve entradas.
+- El dev server con Turbopack mostro un panic inesperado sobre `app/globals.css`, aunque recompilo despues.
 
 ## Soluciones aplicadas
 
@@ -71,6 +73,7 @@
 - Se dejaron capturas en `visual-artifacts/mobile-hero.png`, `visual-artifacts/desktop-hero.png`, `visual-artifacts/mobile-canvas.png` y `visual-artifacts/desktop-canvas.png`.
 - Se corrigio ESLint para no analizar outputs generados.
 - Se configuro identidad Git local del repo: `user.name=3DPrintNova` y `user.email=printnovagroup@gmail.com`.
+- Para evitar el panic de Turbopack durante pruebas locales, `npm.cmd run dev` usa Webpack/Next dev estable y `npm.cmd run dev:turbo` queda como alternativa.
 
 ## Decisiones tecnicas
 
@@ -78,6 +81,7 @@
 - El sitio se enfocara como landing + tienda preparada para ecommerce futuro, con datos mock modulares para catalogo, categorias, reviews y builder personalizado.
 - Se adopta TailwindCSS v3 con variables CSS para tema oscuro, utilidades de glow, animaciones y `darkMode: ["class"]`.
 - Se incluyen scripts `dev`, `build`, `start`, `typecheck` y `lint`.
+- `dev` se mantiene sin Turbopack por estabilidad local; no volver a usar Turbopack como ruta principal hasta verificar que el panic desaparece.
 - Se mantiene una sola pagina principal con componentes de seccion separados para escalabilidad.
 - Se usa WhatsApp como conversion principal y los links se precargan con mensajes contextuales por producto/builder.
 - Se usa JSON-LD `LocalBusiness` para SEO local y ofertas de catalogo.
@@ -153,6 +157,8 @@
 - `git branch -M main`
 - `git remote -v`
 - `gh --version`
+- `git log --oneline -2`
+- `npm.cmd run visual:qa`
 
 ## Notas para el siguiente agente
 
@@ -165,3 +171,4 @@
 - El dev server elevado sigue siendo necesario para QA visual en este entorno.
 - Antes de hacer push, configurar remoto con `git remote add origin <url>` o crear repo GitHub.
 - En este entorno, escribir en `.git` puede requerir permisos elevados.
+- Evitar `next dev --turbopack` como flujo principal: se observo panic de Turbopack en `app/globals.css`.
