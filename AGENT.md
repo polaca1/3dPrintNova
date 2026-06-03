@@ -8,6 +8,7 @@
 - Sesion actual: landing + tienda online de 3DPrintNova implementada con Next.js 15 App Router, TypeScript, TailwindCSS, Framer Motion, GSAP, Lenis, React Three Fiber, Three.js, shadcn-style UI y lucide-react.
 - La web esta disponible en dev server en `http://localhost:3000` cuando `npm.cmd run dev -- --port 3000` esta corriendo.
 - El directorio no es un repositorio Git todavia; `git status --short` fallo con `fatal: not a git repository`.
+- Despues de preparar el repo, la rama local se renombro a `main` y existe un commit local inicial.
 
 ## Ultimos cambios realizados
 
@@ -37,6 +38,8 @@
 - Creado `.gitignore` para excluir `node_modules`, `.next`, logs, cache, `visual-artifacts` y `*.tsbuildinfo`.
 - Inicializado repositorio Git local con `git init`.
 - Añadido script `visual:qa` en `package.json` para ejecutar `node scripts/visual-qa.mjs`.
+- Creado commit local inicial con mensaje `Build 3DPrintNova landing experience`.
+- Renombrada rama local de `master` a `main`.
 
 ## Errores encontrados
 
@@ -55,6 +58,8 @@
 - La primera version de la escena 3D se veia plana y con pocos objetos en capturas; se enriquecio con una nube de productos 3D.
 - `git add .` dentro del sandbox fallo con `Unable to create .git/index.lock: Permission denied`; se resolvio ejecutando `git add .` con permisos elevados.
 - `git commit` fallo inicialmente porque Git no tenia identidad de autor configurada.
+- `gh --version` fallo porque GitHub CLI no esta instalado.
+- No hay remoto Git configurado; `git remote -v` no devuelve entradas.
 
 ## Soluciones aplicadas
 
@@ -84,6 +89,7 @@
 ## Pendientes
 
 - Para hacer `git push`, inicializar Git o usar un remoto existente. El usuario quiere subirlo a su portfolio, pero falta remoto/confirmacion de repo destino.
+- Para hacer `git push`, falta configurar un remoto GitHub (`git remote add origin <url>`). No hay `gh` instalado para crear repos desde CLI y las herramientas GitHub disponibles no incluyen creacion de repositorio nuevo.
 - Si se quiere publicar en GitHub Pages/Vercel, configurar `NEXT_PUBLIC_SITE_URL` real y dominio final.
 - Sustituir productos mock por fotos/videos reales cuando existan.
 - Conectar ecommerce real despues: carrito, stock, checkout, Bizum/Stripe, pedidos y panel admin.
@@ -144,6 +150,9 @@
 - `git commit -m "Build 3DPrintNova landing experience"`
 - `git config user.name 3DPrintNova`
 - `git config user.email printnovagroup@gmail.com`
+- `git branch -M main`
+- `git remote -v`
+- `gh --version`
 
 ## Notas para el siguiente agente
 
