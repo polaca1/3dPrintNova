@@ -49,9 +49,9 @@ export function SocialProofSection() {
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           align="center"
-          copy="Prueba social preparada para crecer con reviews reales, piezas entregadas, UGC de TikTok y casos de cliente."
-          eyebrow="Social proof"
-          title="La impresión 3D se vende mejor cuando se ve viva"
+          copy="Resultados reales respaldados por la satisfacción de nuestros clientes y el volumen de piezas entregadas con mimo."
+          eyebrow="Opiniones"
+          title="Lo que dicen nuestros clientes"
         />
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -111,8 +111,7 @@ export function SocialProofSection() {
             <Badge>TikTok</Badge>
             <h3 className="mt-5 text-3xl font-black text-white">@3d_printnova</h3>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              La web queda lista para incrustar vídeos, reviews verticales,
-              timelapses y contenido de fabricación cuando el ecommerce escale.
+              Síguenos en TikTok para ver el día a día de nuestro taller, timelapses de impresión y los encargos más curiosos que nos pedís.
             </p>
           </div>
           <div className="depth-panel overflow-hidden rounded-[2rem]" data-gsap="reveal">

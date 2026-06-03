@@ -25,6 +25,7 @@ export const contact = {
 };
 
 export const navItems = [
+  { label: "🛒 Tienda", href: "/tienda/", highlight: true },
   { label: "Catálogo", href: "#catalogo" },
   { label: "Personalizar", href: "#builder" },
   { label: "Proceso", href: "#proceso" },

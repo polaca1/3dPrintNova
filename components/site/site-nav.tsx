@@ -48,15 +48,23 @@ export function SiteNav() {
           </a>
 
           <div className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) => (
-              <a
-                className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                href={item.href}
-                key={item.href}
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isHighlight = "highlight" in item && item.highlight;
+              return (
+                <a
+                  className={cn(
+                    "rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isHighlight
+                      ? "border border-cyan-nova/50 bg-cyan-nova/10 text-cyan-nova hover:bg-cyan-nova/20"
+                      : "text-muted-foreground hover:bg-white/[0.07] hover:text-white",
+                  )}
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">

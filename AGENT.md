@@ -53,6 +53,11 @@
 - Actualizado `eslint.config.mjs` para ignorar `out/**`.
 - Reconstruido `out` con `GITHUB_PAGES=true` y publicado manualmente en `gh-pages` con commit `5863a2a`.
 - Verificada la URL publica `https://polaca1.github.io/3dPrintNova/`: responde `200 OK`, contiene `34623351207` y no contiene el numero antiguo.
+- Sesion Safe Browsing: Chrome muestra pantalla roja "Sitio peligroso" para `https://polaca1.github.io/3dPrintNova/`.
+- Revisado el export y la URL publicada: responde `200 OK`, sin redirects raros, sin scripts externos sospechosos, sin iframes y sin numero antiguo.
+- Ejecutado `npm audit`; se detecto vulnerabilidad moderada de `postcss` dentro de Next 15.
+- Actualizado `package.json` con `postcss` fijo en `8.5.15` y override global para que Next use la version parcheada; `npm install` paso a `found 0 vulnerabilities`.
+- Reconstruido el export estatico limpio con `GITHUB_PAGES=true`, pero el push a `gh-pages` quedo pendiente porque el entorno corto acciones elevadas por limite de uso.
 
 ## Reglas del proyecto
 
@@ -98,6 +103,11 @@
 - El primer workflow oficial de GitHub Pages fallo en `Setup Pages`; la API de Pages respondia `404`, asi que se cambio la estrategia de despliegue.
 - `npm.cmd run lint` fallo al analizar archivos generados dentro de `out/_next/static`; `out` estaba en `.gitignore`, pero no en los ignores de ESLint.
 - La API `https://api.github.com/repos/polaca1/3dPrintNova/pages` siguio devolviendo `404` aunque la URL publica de Pages ya servia `200 OK`.
+- Chrome/Safe Browsing marca la URL de GitHub Pages como peligrosa aunque el sitio devuelve `200 OK`; esto requiere revision de Google Safe Browsing/Search Console o mover el sitio a un dominio/hosting no marcado.
+- `npm audit` encontro `postcss <8.5.10` dentro de `node_modules/next/node_modules/postcss`.
+- El override anidado `{ "next": { "postcss": "8.5.15" } }` no actualizo la copia interna de Next.
+- El override global inicial fallo con `EOVERRIDE` porque la dependencia directa `postcss` estaba declarada como rango `^8.5.4`.
+- `git -C out add .` fue rechazado por limite de uso de acciones elevadas; no intentar rodearlo con otro metodo sin aprobacion/credito disponible.
 
 ## Soluciones aplicadas
 
@@ -117,6 +127,9 @@
 - Se cambio el deploy a estrategia de rama `gh-pages`, que funciona aunque la configuracion oficial de Pages via Actions no este disponible desde la API.
 - Se agrego `out/**` a `eslint.config.mjs` para evitar lintar bundles generados.
 - Se publico `out` en la rama remota `gh-pages` y se comprobo la URL publica con `Invoke-WebRequest`.
+- Se fijo `postcss` a `8.5.15` y se agrego override global `"postcss": "8.5.15"` para limpiar `npm audit` sin romper Next.js 15.
+- Se verifico `npm audit --audit-level=moderate` con `found 0 vulnerabilities`.
+- Se reconstruyo `out` con el arbol de dependencias limpio; falta commitear/pushear los cambios por limite de acciones elevadas.
 
 ## Decisiones tecnicas
 
@@ -138,6 +151,8 @@
 ## Pendientes
 
 - Opcional: configurar dominio final si se compra uno; GitHub Pages ya esta publicado en `https://polaca1.github.io/3dPrintNova/`.
+- Resolver pantalla roja de Chrome: reportar falso positivo en Google Safe Browsing y pedir revision en Search Console, o publicar en un dominio propio/hosting alternativo si se necesita solucion inmediata de cara al cliente.
+- Pendiente por limite de acciones elevadas: commitear `package.json`, `package-lock.json` y `AGENT.md`; republicar `out` a `gh-pages`.
 - Sustituir productos mock por fotos/videos reales cuando existan.
 - Conectar ecommerce real despues: carrito, stock, checkout, Bizum/Stripe, pedidos y panel admin.
 - Revisar rendimiento si se anaden modelos GLB pesados; hoy la escena usa primitivas.

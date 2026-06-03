@@ -16,6 +16,7 @@ import { SectionHeading } from "@/components/site/section-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { categories, contact, products, type CategoryId, type Product } from "@/lib/data";
+import { getPopularProducts } from "@/lib/shop-data";
 import { cn } from "@/lib/utils";
 
 function ProductVisual({ product }: { product: Product }) {
@@ -59,12 +60,44 @@ export function CatalogSection() {
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [quickView, setQuickView] = useState<Product | null>(null);
 
+  const combinedProducts = useMemo(() => {
+    const popularShop = getPopularProducts().map((p) => {
+      let category: Exclude<CategoryId, "all"> = "hogar";
+      if (p.category === "decoracion") category = "decoracion";
+      else if (p.category === "gaming") category = "gaming";
+      else if (p.category === "funcional") category = "repuestos";
+      else if (p.category === "figuras") category = "miniaturas";
+      else if (p.category === "hogar") category = "hogar";
+
+      let shape: "vase" | "controller" | "home" | "sign" | "bust" | "gear" | "mini" = "home";
+      if (p.shape === "vase") shape = "vase";
+      else if (p.shape === "tall") shape = "bust";
+      else if (p.shape === "sphere") shape = "gear";
+      else if (p.shape === "cube") shape = "home";
+      else if (p.shape === "cylinder") shape = "vase";
+
+      return {
+        id: p.id,
+        name: p.name,
+        category,
+        price: p.price,
+        tag: "Popular",
+        description: p.description,
+        finish: p.material,
+        color: p.imageColor,
+        shape,
+      } as Product;
+    });
+
+    return [...products, ...popularShop];
+  }, []);
+
   const filteredProducts = useMemo(
     () =>
       active === "all"
-        ? products
-        : products.filter((product) => product.category === active),
-    [active],
+        ? combinedProducts
+        : combinedProducts.filter((product) => product.category === active),
+    [active, combinedProducts],
   );
 
   const toggleWish = (id: string) => {
@@ -86,9 +119,9 @@ export function CatalogSection() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
-            copy="Una tienda pensada para vender hoy por WhatsApp y evolucionar mañana hacia checkout completo, stock, reservas y pagos online."
-            eyebrow="Catálogo / tienda"
-            title="Productos listos para pedir, modificar o convertir en algo tuyo"
+            copy="Explora nuestros diseños listos para imprimir. Elige, personaliza y pide por WhatsApp."
+            eyebrow="Catálogo"
+            title="Productos listos para pedir, modificar o hacer a tu medida"
           />
           <div
             className="depth-panel flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm text-muted-foreground lg:max-w-sm"
@@ -216,6 +249,16 @@ export function CatalogSection() {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        <div className="mt-10 flex justify-center" data-gsap="reveal">
+          <Button asChild size="lg">
+            <a href="/tienda/">
+              <ShoppingBag />
+              Ver toda la tienda
+              <ArrowRight />
+            </a>
+          </Button>
+        </div>
       </div>
 
       <AnimatePresence>

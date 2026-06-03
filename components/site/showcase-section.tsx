@@ -22,14 +22,14 @@ export function ShowcaseSection() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
-            copy="Galería tipo UGC para mezclar piezas reales, antes/después, timelapses y entregas listas para redes sociales."
-            eyebrow="Showcase"
-            title="Piezas que parecen contenido antes de parecer catálogo"
+            copy="Echa un vistazo a nuestros trabajos más recientes. Fotos reales de piezas listas, acabados en detalle y resultados de impresión."
+            eyebrow="Galería"
+            title="Nuestras impresiones en el mundo real"
           />
           <div className="flex gap-3" data-gsap="reveal">
             <Badge className="gap-2">
               <Camera className="size-3.5" />
-              UGC style
+              Fotos Reales
             </Badge>
             <Badge className="gap-2">
               <ScanLine className="size-3.5" />

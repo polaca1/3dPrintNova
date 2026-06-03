@@ -12,9 +12,9 @@ export function TrustSection() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
           <SectionHeading
-            copy="Servicio local con estética de startup: respuesta rápida, fabricación propia y opciones flexibles para encargos pequeños, regalos, empresas y piezas funcionales."
+            copy="Servicio local de confianza: respuesta rápida por WhatsApp, fabricación propia y opciones a medida para particulares, regalos únicos, repuestos y empresas."
             eyebrow="Confianza local"
-            title="Producción 3D con velocidad de barrio y acabado de laboratorio"
+            title="Producción 3D ágil con acabado profesional"
           />
 
           <div

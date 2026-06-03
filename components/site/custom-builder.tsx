@@ -1,22 +1,46 @@
 "use client";
 
 import {
+  AlertTriangle,
   ArrowRight,
+  FileCheck,
   FileUp,
   ImageUp,
+  Loader2,
   MessageCircle,
   Minus,
   Plus,
   Ruler,
   Sparkles,
+  X,
 } from "lucide-react";
-import { useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useMemo, useState, type CSSProperties } from "react";
 
 import { SectionHeading } from "@/components/site/section-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { builderOptions, contact } from "@/lib/data";
+import { parseModelFile, type ModelInfo } from "@/lib/stl-parser";
 import { cn } from "@/lib/utils";
+
+// ── Material pricing rates (€ per cm³) ──────────────────────────────────────
+
+const MATERIAL_RATES: Record<string, number> = {
+  PLA: 0.08,
+  PETG: 0.11,
+  Silk: 0.10,
+};
+
+const SETUP_FEE = 5;
+const MIN_PRICE = 8;
+
+// ── Auto-select size based on max bounding box dimension (cm) ───────────────
+
+function autoSizeIndex(maxDimensionCm: number): number {
+  if (maxDimensionCm <= 8) return 0; // S – hasta 8 cm
+  if (maxDimensionCm <= 16) return 1; // M – hasta 16 cm
+  return 2; // L – hasta 28 cm
+}
 
 export function CustomBuilder() {
   const [sizeIndex, setSizeIndex] = useState(1);
@@ -24,16 +48,68 @@ export function CustomBuilder() {
   const [colorIndex, setColorIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
+  // File‑parsing state
+  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
+  const [parseError, setParseError] = useState<string | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
+
   const size = builderOptions.sizes[sizeIndex];
   const material = builderOptions.materials[materialIndex];
   const color = builderOptions.colors[colorIndex];
 
+  // ── Price calculation ───────────────────────────────────────────────────
+
   const price = useMemo(() => {
+    if (modelInfo) {
+      // Volume‑based pricing: volume_cm³ × material rate + setup, × qty
+      const rate = MATERIAL_RATES[material.label] ?? 0.08;
+      const unitPrice = modelInfo.volumeCm3 * rate + SETUP_FEE;
+      return Math.max(MIN_PRICE, Math.round(unitPrice * quantity));
+    }
+
+    // Fallback generic estimator (original logic)
     const base = 12.5 * size.multiplier * material.multiplier;
     const setup = quantity > 1 ? 4 : 6;
+    return Math.max(MIN_PRICE, Math.round((base + setup) * quantity));
+  }, [material.label, material.multiplier, modelInfo, quantity, size.multiplier]);
 
-    return Math.max(8, Math.round((base + setup) * quantity));
-  }, [material.multiplier, quantity, size.multiplier]);
+  // ── File handler ────────────────────────────────────────────────────────
+
+  const handleFileChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      setIsParsing(true);
+      setParseError(null);
+      setModelInfo(null);
+
+      try {
+        const info = await parseModelFile(file);
+        setModelInfo(info);
+
+        // Auto-select size based on max bounding box dimension
+        const maxDim = Math.max(
+          info.boundingBox.width,
+          info.boundingBox.height,
+          info.boundingBox.depth,
+        );
+        setSizeIndex(autoSizeIndex(maxDim));
+      } catch (err) {
+        setParseError(
+          err instanceof Error ? err.message : "Error al procesar el archivo.",
+        );
+      } finally {
+        setIsParsing(false);
+      }
+    },
+    [],
+  );
+
+  const clearModel = useCallback(() => {
+    setModelInfo(null);
+    setParseError(null);
+  }, []);
 
   const previewStyle = { "--preview": color.value } as CSSProperties;
 
@@ -64,8 +140,9 @@ export function CustomBuilder() {
               </Badge>
             </div>
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
-              El precio final se confirma tras revisar geometría, soportes y
-              horas de impresión.
+              {modelInfo
+                ? "Precio basado en el volumen real de tu modelo 3D."
+                : "El precio final se confirma tras revisar geometría, soportes y horas de impresión."}
             </p>
           </div>
         </div>
@@ -73,21 +150,68 @@ export function CustomBuilder() {
         <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_0.82fr]">
           <div className="depth-panel rounded-[2rem] p-4 sm:p-6" data-gsap="reveal">
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="group flex min-h-36 cursor-pointer flex-col justify-between rounded-[1.5rem] border border-dashed border-cyan-nova/35 bg-cyan-nova/[0.08] p-5 transition hover:bg-cyan-nova/[0.12]">
+              {/* ── STL / OBJ upload ─────────────────────────────────── */}
+              <label
+                className={cn(
+                  "group relative flex min-h-36 cursor-pointer flex-col justify-between rounded-[1.5rem] border border-dashed p-5 transition",
+                  modelInfo
+                    ? "border-emerald-400/40 bg-emerald-400/[0.08]"
+                    : parseError
+                      ? "border-red-400/40 bg-red-400/[0.08]"
+                      : "border-cyan-nova/35 bg-cyan-nova/[0.08] hover:bg-cyan-nova/[0.12]",
+                )}
+              >
                 <input
                   accept=".stl,.obj,.3mf"
                   className="sr-only"
+                  onChange={handleFileChange}
                   type="file"
                 />
-                <FileUp className="size-7 text-cyan-nova" />
+
+                {/* Icon / Spinner */}
+                {isParsing ? (
+                  <Loader2 className="size-7 animate-spin text-cyan-nova" />
+                ) : modelInfo ? (
+                  <FileCheck className="size-7 text-emerald-400" />
+                ) : parseError ? (
+                  <AlertTriangle className="size-7 text-red-400" />
+                ) : (
+                  <FileUp className="size-7 text-cyan-nova" />
+                )}
+
                 <span>
                   <span className="block text-lg font-black text-white">
-                    Subir STL / OBJ
+                    {isParsing
+                      ? "Analizando…"
+                      : modelInfo
+                        ? modelInfo.fileName
+                        : "Subir STL / OBJ"}
                   </span>
                   <span className="mt-2 block text-sm leading-6 text-muted-foreground">
-                    Archivo listo para validar escala y tolerancias.
+                    {isParsing
+                      ? "Calculando volumen y dimensiones…"
+                      : parseError
+                        ? parseError
+                        : modelInfo
+                          ? `${modelInfo.boundingBox.width} × ${modelInfo.boundingBox.height} × ${modelInfo.boundingBox.depth} cm`
+                          : "Archivo listo para validar escala y tolerancias."}
                   </span>
                 </span>
+
+                {/* Clear button */}
+                {modelInfo && (
+                  <button
+                    className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-white/10 text-white/70 transition hover:bg-white/20 hover:text-white"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      clearModel();
+                    }}
+                    title="Quitar archivo"
+                    type="button"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
               </label>
 
               <label className="group flex min-h-36 cursor-pointer flex-col justify-between rounded-[1.5rem] border border-dashed border-violet-nova/35 bg-violet-nova/[0.08] p-5 transition hover:bg-violet-nova/[0.12]">
@@ -108,11 +232,51 @@ export function CustomBuilder() {
               </label>
             </div>
 
+            {/* ── Parsed model info panel ───────────────────────────── */}
+            {modelInfo && (
+              <div className="mt-4 animate-in fade-in slide-in-from-top-2 rounded-[1.25rem] border border-cyan-nova/20 bg-cyan-nova/[0.06] p-4 duration-300">
+                <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                  <div>
+                    <p className="font-semibold text-cyan-nova">Volumen</p>
+                    <p className="mt-1 text-lg font-black text-white">
+                      {modelInfo.volumeCm3}
+                      <span className="text-xs font-medium text-white/60">
+                        {" "}
+                        cm³
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-cyan-nova">Dimensiones</p>
+                    <p className="mt-1 text-sm font-bold text-white">
+                      {modelInfo.boundingBox.width} × {modelInfo.boundingBox.height} ×{" "}
+                      {modelInfo.boundingBox.depth}
+                      <span className="text-xs font-medium text-white/60">
+                        {" "}
+                        cm
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-cyan-nova">Triángulos</p>
+                    <p className="mt-1 text-lg font-black text-white">
+                      {modelInfo.triangleCount.toLocaleString("es-ES")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="mt-7 grid gap-6 xl:grid-cols-2">
               <fieldset>
                 <legend className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
                   <Ruler className="size-4 text-cyan-nova" />
                   Tamaño
+                  {modelInfo && (
+                    <span className="ml-auto text-xs font-medium text-emerald-400">
+                      auto
+                    </span>
+                  )}
                 </legend>
                 <div className="grid grid-cols-3 gap-2">
                   {builderOptions.sizes.map((option, index) => (
@@ -265,7 +429,7 @@ export function CustomBuilder() {
               </div>
               <Button asChild className="mt-5 w-full" size="lg">
                 <a
-                  href={`${contact.whatsappHref}%20Builder%3A%20${size.label}%2C%20${material.label}%2C%20${encodeURIComponent(color.label)}%2C%20${quantity}%20uds.%20Estimado%3A%20${price}%E2%82%AC.`}
+                  href={`${contact.whatsappHref}%20Builder%3A%20${size.label}%2C%20${material.label}%2C%20${encodeURIComponent(color.label)}%2C%20${quantity}%20uds.%20Estimado%3A%20${price}%E2%82%AC.${modelInfo ? `%20Archivo%3A%20${encodeURIComponent(modelInfo.fileName)}%20(${modelInfo.volumeCm3}cm%C2%B3%2C%20${modelInfo.boundingBox.width}%C3%97${modelInfo.boundingBox.height}%C3%97${modelInfo.boundingBox.depth}cm)` : ""}`}
                 >
                   <MessageCircle />
                   Enviar presupuesto

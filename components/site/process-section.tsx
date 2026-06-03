@@ -11,15 +11,15 @@ export function ProcessSection() {
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="lg:sticky lg:top-28 lg:h-fit">
           <SectionHeading
-            copy="Un flujo claro para que cada encargo tenga control de alcance, calidad y entrega desde el primer mensaje."
-            eyebrow="Sticky storytelling"
-            title="Diseño → Modelado → Impresión → Acabado → Envío"
+            copy="Un proceso transparente y detallado para asegurar la calidad, resistencia y precisión de tu pieza en cada etapa."
+            eyebrow="Nuestro Método"
+            title="Cómo hacemos realidad tu pieza"
           />
           <div className="mt-8 rounded-[2rem] border border-white/[0.1] bg-white/[0.045] p-4">
             <p className="text-sm leading-7 text-muted-foreground">
-              Cada paso deja trazabilidad: objetivo, medidas, material, color,
-              revisión y logística. El resultado es una experiencia cercana,
-              pero con proceso de fabricación serio.
+              Desde tu boceto inicial o archivo STL hasta el envío definitivo,
+              controlamos cada parámetro (temperatura, velocidad, ventilación y 
+              tomas de contacto) para entregarte un producto impecable.
             </p>
           </div>
         </div>

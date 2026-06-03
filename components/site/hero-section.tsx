@@ -9,6 +9,7 @@ import {
   Cpu,
   MessageCircle,
   MousePointer2,
+  ShoppingBag,
   Sparkles,
 } from "lucide-react";
 import { useState, type CSSProperties, type PointerEvent } from "react";
@@ -92,6 +93,12 @@ export function HeroSection() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
+              <a href="/tienda/">
+                <ShoppingBag />
+                Ir a tienda
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
               <a href={contact.whatsappHref}>
                 <MessageCircle />
                 Crear mi diseño
