@@ -10,6 +10,7 @@
 - El proyecto ya es un repositorio Git local en rama `main`.
 - El remoto `origin` apunta a `https://github.com/polaca1/3dPrintNova.git` y `main` sigue a `origin/main`.
 - Push realizado a GitHub: `https://github.com/polaca1/3dPrintNova`.
+- GitHub Pages esta publicado en `https://polaca1.github.io/3dPrintNova/` desde la rama `gh-pages`.
 
 ## Ultimos cambios realizados
 
@@ -47,6 +48,30 @@
 - Configurado despliegue a GitHub Pages mediante workflow `.github/workflows/deploy.yml`.
 - Actualizado `next.config.ts` para usar `output: "export"`, `basePath: "/3dPrintNova"`, `assetPrefix` y `images.unoptimized` cuando `GITHUB_PAGES=true`.
 - Marcadas `app/robots.ts` y `app/sitemap.ts` como `dynamic = "force-static"` para que funcionen con export estatico.
+- Actualizado el contacto principal de la web a WhatsApp `+34 623 35 12 07`.
+- Cambiado el workflow de Pages para publicar el export estatico en la rama `gh-pages` en vez de depender de `actions/configure-pages`.
+- Actualizado `eslint.config.mjs` para ignorar `out/**`.
+- Reconstruido `out` con `GITHUB_PAGES=true` y publicado manualmente en `gh-pages` con commit `5863a2a`.
+- Verificada la URL publica `https://polaca1.github.io/3dPrintNova/`: responde `200 OK`, contiene `34623351207` y no contiene el numero antiguo.
+
+## Reglas del proyecto
+
+- Leer siempre `AGENT.md` completo antes de escribir, modificar o borrar codigo/configuracion.
+- Actualizar `AGENT.md` despues de cada cambio importante con archivos tocados, comandos, errores, soluciones y pendientes.
+- Mantener la web con estetica premium AI/SaaS, cyberpunk elegante, motion avanzado, responsive mobile-first y alto impacto visual.
+- Cuidar que el sitio se vea bonito tanto en movil como en PC antes de dar el trabajo por terminado.
+- Mantener objetos 3D y profundidad visual; evitar que la landing vuelva a sentirse plana.
+- Contacto principal actualizado: WhatsApp `+34 623 35 12 07`.
+- Para presupuestos, calcular siempre a precio de amigo porque el cliente tiene 14 anos; priorizar una cifra clara, asequible y proporcional al alcance real.
+- Separar precio de lo ya implementado y precio de futuras ampliaciones como ecommerce real, panel admin, fotos/productos reales o dominio.
+- Al publicar en GitHub Pages, reconstruir el export estatico para no subir contenido antiguo.
+
+## Presupuesto orientativo
+
+- Trabajo ya implementado: landing premium, tienda visual preparada, builder de presupuesto, animaciones, escena 3D, SEO, responsive, QA, GitHub y Pages.
+- Precio realista de mercado: 700-1.200 EUR por alcance y complejidad.
+- Precio de amigo recomendado para este cliente: 160-220 EUR cerrado.
+- Recomendacion actual: 180 EUR por todo lo hecho y publicado, dejando claro que ecommerce real con pagos, stock y panel se presupuesta aparte.
 
 ## Errores encontrados
 
@@ -70,6 +95,9 @@
 - El dev server con Turbopack mostro un panic inesperado sobre `app/globals.css`, aunque recompilo despues.
 - Antes de recibir el enlace de GitHub no se pudo hacer push porque no habia remoto; tras recibir `polaca1/3dPrintNova`, se configuro y se hizo push correctamente.
 - El primer build con `GITHUB_PAGES=true` fallo porque `/robots.txt` y `/sitemap.xml` no estaban marcados como rutas estaticas para `output: export`.
+- El primer workflow oficial de GitHub Pages fallo en `Setup Pages`; la API de Pages respondia `404`, asi que se cambio la estrategia de despliegue.
+- `npm.cmd run lint` fallo al analizar archivos generados dentro de `out/_next/static`; `out` estaba en `.gitignore`, pero no en los ignores de ESLint.
+- La API `https://api.github.com/repos/polaca1/3dPrintNova/pages` siguio devolviendo `404` aunque la URL publica de Pages ya servia `200 OK`.
 
 ## Soluciones aplicadas
 
@@ -86,6 +114,10 @@
 - Se soluciono el build de GitHub Pages añadiendo `export const dynamic = "force-static"` en `app/robots.ts` y `app/sitemap.ts`.
 - Se verifico build estatico local con `GITHUB_PAGES=true` y `NEXT_PUBLIC_SITE_URL=https://polaca1.github.io/3dPrintNova`; el export genera `out` correctamente.
 
+- Se cambio el deploy a estrategia de rama `gh-pages`, que funciona aunque la configuracion oficial de Pages via Actions no este disponible desde la API.
+- Se agrego `out/**` a `eslint.config.mjs` para evitar lintar bundles generados.
+- Se publico `out` en la rama remota `gh-pages` y se comprobo la URL publica con `Invoke-WebRequest`.
+
 ## Decisiones tecnicas
 
 - Se va a crear una aplicacion Next.js 15 con App Router, TypeScript, TailwindCSS, Framer Motion, GSAP, Lenis, Three.js / React Three Fiber, componentes estilo shadcn y lucide-react.
@@ -100,12 +132,12 @@
 - Se usa `preserveDrawingBuffer: true` en el Canvas para permitir QA automatizada del render WebGL.
 - Se usa Playwright como verificacion visual local, no como test suite formal de CI todavia.
 - Se ignora `.next` en ESLint; no volver a lintar carpetas generadas.
-- GitHub Pages se despliega con GitHub Actions oficiales: `actions/configure-pages`, `actions/upload-pages-artifact` y `actions/deploy-pages`.
+- GitHub Pages se despliega publicando el export estatico en la rama `gh-pages`; evitar `actions/configure-pages` si la API de Pages devuelve `404`.
 - El build de Pages usa `GITHUB_PAGES=true` para activar base path solo en produccion de Pages; el desarrollo local conserva rutas normales.
 
 ## Pendientes
 
-- Si se quiere publicar en GitHub Pages/Vercel, configurar `NEXT_PUBLIC_SITE_URL` real y dominio final.
+- Opcional: configurar dominio final si se compra uno; GitHub Pages ya esta publicado en `https://polaca1.github.io/3dPrintNova/`.
 - Sustituir productos mock por fotos/videos reales cuando existan.
 - Conectar ecommerce real despues: carrito, stock, checkout, Bizum/Stripe, pedidos y panel admin.
 - Revisar rendimiento si se anaden modelos GLB pesados; hoy la escena usa primitivas.
@@ -177,6 +209,25 @@
 - `Get-ChildItem -Recurse -Depth 2 out | Select-Object FullName`
 - `Get-Content -Raw -Encoding UTF8 out\robots.txt`
 - `Get-Content -Raw -Encoding UTF8 out\sitemap.xml`
+
+- `npm.cmd run typecheck`
+- `npm.cmd run lint`
+- `cmd.exe /d /c "set GITHUB_PAGES=true&& set NEXT_PUBLIC_SITE_URL=https://polaca1.github.io/3dPrintNova&& npm.cmd run build"`
+- `Test-Path out\.git`
+- `Test-Path out\.nojekyll`
+- `rg -n "34623351207|\+34 623 35 12 07|3dPrintNova/_next|34687591431|\+34 687" out\index.html out\robots.txt out\sitemap.xml`
+- `New-Item -ItemType File -Force out\.nojekyll`
+- `git -C out init`
+- `git -C out config user.name 3DPrintNova`
+- `git -C out config user.email printnovagroup@gmail.com`
+- `git -C out checkout -B gh-pages`
+- `git -C out add .`
+- `git -C out commit -m "Deploy 3DPrintNova static site"`
+- `git -C out remote add origin https://github.com/polaca1/3dPrintNova.git`
+- `git -C out push --force origin gh-pages`
+- `Invoke-RestMethod -Uri 'https://api.github.com/repos/polaca1/3dPrintNova/pages'`
+- `Invoke-WebRequest -Uri 'https://polaca1.github.io/3dPrintNova/' -UseBasicParsing`
+- `git ls-remote --heads origin gh-pages`
 
 ## Notas para el siguiente agente
 

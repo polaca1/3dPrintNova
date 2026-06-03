@@ -17,9 +17,9 @@ import {
 } from "lucide-react";
 
 export const contact = {
-  whatsapp: "+34 687 591 431",
+  whatsapp: "+34 623 35 12 07",
   whatsappHref:
-    "https://wa.me/34687591431?text=Hola%203DPrintNova%2C%20quiero%20crear%20un%20dise%C3%B1o%203D.",
+    "https://wa.me/34623351207?text=Hola%203DPrintNova%2C%20quiero%20crear%20un%20dise%C3%B1o%203D.",
   email: "printnovagroup@gmail.com",
   tiktok: "@3d_printnova",
 };
