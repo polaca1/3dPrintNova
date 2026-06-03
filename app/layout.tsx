@@ -71,6 +71,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark" suppressHydrationWarning>
       <head>
+        {/* Force HTTPS to resolve mixed content security warnings in browsers */}
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       </head>
       <body>
